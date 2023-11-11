@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 
-function SettingsScreen() {
+function Index() {
     return (
         <View>
             <Text>Settings Screen</Text>
@@ -8,4 +8,4 @@ function SettingsScreen() {
     );
 }
 
-export default SettingsScreen
+export default Index
