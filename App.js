@@ -2,6 +2,7 @@ import {Provider, useSelector} from 'react-redux'
 import {store} from './src/store'
 import Index from "./src/app";
 import axios from "axios";
+import Toast from 'react-native-toast-message';
 
 export default function App() {
 
