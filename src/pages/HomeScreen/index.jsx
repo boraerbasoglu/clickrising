@@ -5,13 +5,15 @@ import {GetPokemon, ListPokemons} from "./api";
 import {selectLoading, startLoading, stopLoading} from "../../app/slice";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {styles} from "../../styles/global";
-import  {LoadMoreFlatlist,} from 'react-native-load-more-flatlist';
+import {LoadMoreFlatlist,} from 'react-native-load-more-flatlist';
+import {useNavigation} from '@react-navigation/native';
+
 function HomeScreen() {
 
     const dispatch = useDispatch()
-    const loading = useSelector(selectLoading)
     const [page, setPage] = useState({current: 1})
     const [pokemons, setPokemons] = useState([])
+    const navigation = useNavigation();
 
     const {
         isLoading,
@@ -19,8 +21,8 @@ function HomeScreen() {
         isFetching,
     } = useQuery({
         queryKey: ['pokemon', page.current],
-        queryFn: () =>  ListPokemons(page.current),
-        keepPreviousData : true
+        queryFn: () => ListPokemons(page.current),
+        keepPreviousData: true
     })
 
     function nextPage() {
@@ -34,17 +36,20 @@ function HomeScreen() {
             setPokemons(lastPokemons.concat(data?.data?.data))
         }
 
-        if (isLoading) {
-            dispatch(startLoading())
-        } else {
-            dispatch(stopLoading())
-        }
     }, [data]);
 
     async function getPokemonDetails(id) {
         dispatch(startLoading())
         try {
             const result = await GetPokemon(id)
+            dispatch(stopLoading())
+            console.log(result.data.data.name);
+            navigation.navigate('Details', {
+                name: result.data.data.name,
+                supertype: result.data.data.supertype,
+                image: result.data.data.images.small,
+                convertedRetreatCost: result.data.data.convertedRetreatCost
+            })
             console.log(result);
         } catch (e) {
             console.log(e)
@@ -55,9 +60,9 @@ function HomeScreen() {
 
     return (
         <>
-            <View >
+            <View>
                 <LoadMoreFlatlist
-                    contentContainerStyle={{flexGrow:1,zIndex:1}}
+                    contentContainerStyle={{flexGrow: 1, zIndex: 1}}
                     data={pokemons}
                     onEndReached={() => {
                         if (!isFetching && pokemons.length > 0) {
@@ -65,9 +70,11 @@ function HomeScreen() {
                         }
                     }}
                     isLoading={isFetching && isLoading === false}
-                    renderItem={({item}) => <TouchableOpacity onPress={() => getPokemonDetails(item.id)}><View style={styles.cardContainer}><Image
+                    renderItem={({item}) => <TouchableOpacity onPress={() => getPokemonDetails(item.id)}><View
+                        style={styles.cardContainer}><Image
                         style={styles.tinyLogo}
-                        source={{uri: item.images.small}}/><Text style={styles.text}>{item.name}</Text></View></TouchableOpacity>}
+                        source={{uri: item.images.small}}/><Text
+                        style={styles.text}>{item.name}</Text></View></TouchableOpacity>}
                 />
             </View>
         </>

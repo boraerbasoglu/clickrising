@@ -15,18 +15,35 @@ const styles = StyleSheet.create({
     tinyLogo: {
         flex: 1,
         resizeMode:'cover',
-        width: 50, height: 100,
+        height: 100,
+        maxHeight:250
     },
     spinnerView: {
         position: "absolute",
-        zIndex: 9999999999,
         left: 0,
         right: 0,
         top: 0,
         bottom: 0,
+        zIndex:1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#F5FCFF88",
+        backgroundColor: "rgba(255,255,255,0.33)",
+    },
+    detailScreen: {
+        flex:1,
+        padding:10
+    },
+    detailScreenTitle: {
+        fontWeight:'bold',
+        fontSize:16,
+        marginBottom:10,
+        marginTop:20
+    },
+    detailScreenBody: {
+
+        fontSize:15,
+        marginBottom:5
+
     }
 });
 export {styles}
