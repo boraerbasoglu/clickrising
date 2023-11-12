@@ -15,7 +15,6 @@ export const mainSlice = createSlice({
 })
 
 export const { setNoData } = mainSlice.actions
-
 export const selectNoData = (state) => state.home.noData
 
 export default mainSlice.reducer
