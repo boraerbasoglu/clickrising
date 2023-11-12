@@ -1,7 +1,7 @@
-import {View, Text, FlatList, Image, ActivityIndicator} from 'react-native';
+import {View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {useQuery} from 'react-query'
 import {useSelector, useDispatch} from 'react-redux'
-import {ListPokemons} from "./api";
+import {GetPokemon, ListPokemons} from "./api";
 import {selectLoading, startLoading, stopLoading} from "../../app/slice";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {styles} from "../../styles/global";
@@ -23,49 +23,53 @@ function HomeScreen() {
         keepPreviousData : true
     })
 
-
-    if (isLoading) {
-        dispatch(startLoading())
-    } else {
-        dispatch(stopLoading())
-    }
-
     function nextPage() {
         let newPage = page.current;
         setPage({current: newPage + 1})
     }
 
     useEffect(() => {
-        console.log(page.current)
-    }, [page.current]);
-
-    useEffect(() => {
         let lastPokemons = pokemons;
         if (data?.data?.data) {
             setPokemons(lastPokemons.concat(data?.data?.data))
         }
+
+        if (isLoading) {
+            dispatch(startLoading())
+        } else {
+            dispatch(stopLoading())
+        }
     }, [data]);
+
+    async function getPokemonDetails(id) {
+        dispatch(startLoading())
+        try {
+            const result = await GetPokemon(id)
+            console.log(result);
+        } catch (e) {
+            console.log(e)
+        } finally {
+            dispatch(stopLoading())
+        }
+    }
 
     return (
         <>
             <View >
                 <LoadMoreFlatlist
-                    contentContainerStyle={{flexGrow:1}}
+                    contentContainerStyle={{flexGrow:1,zIndex:1}}
                     data={pokemons}
                     onEndReached={() => {
-                        if (!isFetching) {
+                        if (!isFetching && pokemons.length > 0) {
                             nextPage();
                         }
                     }}
-                    onEndReachedThreshold={0.2}
-                    isLoading={isFetching}
-                    renderItem={({item}) => <View style={styles.cardContainer}><Image
+                    isLoading={isFetching && isLoading === false}
+                    renderItem={({item}) => <TouchableOpacity onPress={() => getPokemonDetails(item.id)}><View style={styles.cardContainer}><Image
                         style={styles.tinyLogo}
-                        source={{uri: item.images.small}}/><Text style={styles.text}>{item.name}</Text></View>}
+                        source={{uri: item.images.small}}/><Text style={styles.text}>{item.name}</Text></View></TouchableOpacity>}
                 />
-
             </View>
-
         </>
     );
 }

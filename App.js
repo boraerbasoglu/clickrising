@@ -18,11 +18,9 @@ export default function App() {
 
     axios.interceptors.response.use(
         function (response) {
-            //console.log(response.data);
             return response
         },
         function (error) {
-            //console.log(error)
             return Promise.reject(error)
         }
     )

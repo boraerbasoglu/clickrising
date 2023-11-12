@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     },
     spinnerView: {
         position: "absolute",
-        zIndex: 1,
+        zIndex: 9999999999,
         left: 0,
         right: 0,
         top: 0,
